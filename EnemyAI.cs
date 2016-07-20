@@ -13,6 +13,7 @@ public class BasicEnemyAI : MonoBehaviour {
   public float maxSightAngle;
   public float moveSpeed;
   public float rotationSpeed;
+  float weaponDamage;
  
   GameObject[] specificTargetTags;
   List<GameObject> possibleTargets;
@@ -24,6 +25,10 @@ public class BasicEnemyAI : MonoBehaviour {
       foreach (GameObject possibleTarget in specificTargetTags){
         possibleTargets.Add(possibleTarget);
       }
+    }
+    LivingClass weapon = gameObject.GetComponent<LivingClass>();
+    if (weapon != null){
+      weaponDamage = weapon.WeaponDamage;
     }
     StartCoroutine(Base());
   }
@@ -68,9 +73,11 @@ public class BasicEnemyAI : MonoBehaviour {
   }
 
   void UseWeapon(GameObject target){
-    //some animation and create an event telling gaemobject target to take damage
+    LivingClass thingHit = target.GetComponent<LivingClass>();
+    if (thingHit != null){
+      thingHit.TakeDamage(weaponDamage);
+    }
   }
-  
 }
 /*PseudoCode:
 CREATE A STATE TREE.

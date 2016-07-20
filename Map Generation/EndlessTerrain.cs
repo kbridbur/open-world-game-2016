@@ -75,7 +75,7 @@ public class EndlessTerrain : MonoBehaviour {
 
 		MeshRenderer meshRenderer;
 		MeshFilter meshFilter;
-    MeshCollider meshCollider;
+    MeshCollider meshCollider;//Define collider as a component of a terrain chunk
 
 		LODInfo[] detailLevels;
 		LODMesh[] lodMeshes;
@@ -94,7 +94,7 @@ public class EndlessTerrain : MonoBehaviour {
 			meshObject = new GameObject("Terrain Chunk");
 			meshRenderer = meshObject.AddComponent<MeshRenderer>();
 			meshFilter = meshObject.AddComponent<MeshFilter>();
-      meshCollider = meshObject.AddComponent<MeshCollider>();
+      meshCollider = meshObject.AddComponent<MeshCollider>(); //Add a collider to every chunk generated
 			meshRenderer.material = material;
 
 			meshObject.transform.position = positionV3 * scale;
@@ -143,7 +143,7 @@ public class EndlessTerrain : MonoBehaviour {
 						if (lodMesh.hasMesh) {
 							previousLODIndex = lodIndex;
 							meshFilter.sharedMesh = lodMesh.mesh;
-              meshCollider.sharedMesh = lodMesh.mesh;
+              meshCollider.sharedMesh = lodMesh.mesh; //Give the meshCollider the same mesh as the filter
 						} else if (!lodMesh.hasRequestedMesh) {
 							lodMesh.RequestMesh (mapData);
 						}

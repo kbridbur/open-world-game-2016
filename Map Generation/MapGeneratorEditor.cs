@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEditor;
-//Test Version
+
 [CustomEditor (typeof (MapGenerator))]
 public class MapGeneratorEditor : Editor {
 
