@@ -19,7 +19,7 @@
      }
      // Update is called once per frame
      void Update () {
-         transform.position = GetTransform();
+         transform.position = Vector3.Lerp(transform.position, GetTransform(), Time.deltaTime * damping);
      }
      void LateUpdate() {
          if(target) {
