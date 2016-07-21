@@ -3,10 +3,15 @@ using System.Collections;
 
 public class InventoryClass : MonoBehaviour {
   GameObject[] itemArray;
-  int rows;
-  int columns;
-  int maxItemCapacity = rows*columns;
+  public int rows;
+  public int columns;
+  int maxItemCapacity;
   int numItems;
+  
+  void Awake(){
+    itemArray = new GameObject[rows*columns];
+    maxItemCapacity = rows*columns;
+  }
   
   public void AddItemToArray(GameObject item){
     if (numItems != maxItemCapacity){
@@ -20,8 +25,13 @@ public class InventoryClass : MonoBehaviour {
   }
   
   public void RemoveItemFromArray(GameObject item){
-    if (itemArray.Contains(item)){
-      itemArray.Remove(item);
+    if (CheckDoesInventoryContain(item)){
+      for (int i = 0; i < numItems; i++){
+        if (itemArray[i] != item){
+          itemArray[i] = itemArray[i];
+        }
+        else{itemArray[i] = null;}
+      }
       CondenseArray();
     }
     numItems--;
@@ -42,8 +52,17 @@ public class InventoryClass : MonoBehaviour {
     CondenseArray();
   }
   
-  public void DisplayInventory{
+  public void DisplayInventory(){
     //something
+  }
+  
+  public bool CheckDoesInventoryContain(GameObject item){
+    foreach(GameObject checkingFor in itemArray){
+      if (checkingFor == item){
+        return true;
+      }
+    }
+    return false;
   }
   
   void CondenseArray(){

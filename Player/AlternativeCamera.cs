@@ -1,9 +1,8 @@
 ﻿ using UnityEngine;
  using System.Collections;
 
- [AddComponentMenu("Camera-Control/Smooth Look At CS")]
  public class AlternativeCamera : MonoBehaviour {
-     public Transform target;        //an Object to lock on to
+     public Transform target;        //an Object to follow
      public float damping = 6.0f;    //to control the rotation 
      public bool smooth = true;
      public float minDistance = 10.0f;    //How far the target is from the camera
@@ -13,17 +12,11 @@
      
      private Color color;
      private float alpha = 1.0f;
-     private Transform _myTransform;
+     private Transform CameraTransform;
      
      void Awake() {
-         _myTransform = transform;
+         CameraTransform = transform;
      }
-     
-     // Use this for initialization
-     void Start () {
-         
-     }
-     
      // Update is called once per frame
      void Update () {
          transform.position = GetTransform();
@@ -33,13 +26,13 @@
              if(smooth) {
                  
                  //Look at and dampen the rotation
-                 Quaternion rotation = Quaternion.LookRotation(target.position - _myTransform.position);
-                 _myTransform.rotation = Quaternion.Slerp(_myTransform.rotation, rotation, Time.deltaTime * damping);
+                 Quaternion rotation = Quaternion.LookRotation(target.position - CameraTransform.position);
+                 CameraTransform.rotation = Quaternion.Slerp(CameraTransform.rotation, rotation, Time.deltaTime * damping);
              }
              else { //Just look at
-                 _myTransform.rotation = Quaternion.FromToRotation(-Vector3.forward, (new Vector3(target.position.x, target.position.y, target.position.z) - _myTransform.position).normalized);
+                 CameraTransform.rotation = Quaternion.FromToRotation(-Vector3.forward, (new Vector3(target.position.x, target.position.y, target.position.z) - CameraTransform.position).normalized);
                  
-                 float distance = Vector3.Distance(target.position, _myTransform.position);
+                 float distance = Vector3.Distance(target.position, CameraTransform.position);
                  
                  if(distance < minDistance) {
                      alpha = Mathf.Lerp(alpha, 0.0f, Time.deltaTime * 2.0f);
