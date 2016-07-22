@@ -9,8 +9,10 @@ public class MapGenerator : MonoBehaviour {
 	public enum DrawMode {NoiseMap, ColourMap, Mesh, FalloffMap};
 	public DrawMode drawMode;
 
+  //Local vs global height normalizing
 	public Noise.NormalizeMode normalizeMode;
 
+  //Size of each side of a chunk (add one + border)
 	public const int mapChunkSize = 239;
 	[Range(0,6)]
 	public int editorPreviewLOD;
@@ -26,22 +28,27 @@ public class MapGenerator : MonoBehaviour {
 
 	public bool useFalloff;
 
+  //Mapdata height scaling tools
 	public float meshHeightMultiplier;
 	public AnimationCurve meshHeightCurve;
 
+  //Controls if game needs to be running for the map to update when changes are made in the editor
 	public bool autoUpdate;
-
+  
+  //2d array of height value to color for color map
 	public TerrainType[] regions;
 
 	float[,] falloffMap;
 
+  //Queues for the map data and mesh data threads
 	Queue<MapThreadInfo<MapData>> mapDataThreadInfoQueue = new Queue<MapThreadInfo<MapData>>();
 	Queue<MapThreadInfo<MeshData>> meshDataThreadInfoQueue = new Queue<MapThreadInfo<MeshData>>();
 
 	void Awake() {
 		falloffMap = FalloffGenerator.GenerateFalloffMap (mapChunkSize);
 	}
-
+  
+  //Draw the map in the game
 	public void DrawMapInEditor() {
 		MapData mapData = GenerateMapData (Vector2.zero);
 
@@ -57,6 +64,7 @@ public class MapGenerator : MonoBehaviour {
 		}
 	}
 
+  //Begin map data thread
 	public void RequestMapData(Vector2 centre, Action<MapData> callback) {
 		ThreadStart threadStart = delegate {
 			MapDataThread (centre, callback);
@@ -65,6 +73,7 @@ public class MapGenerator : MonoBehaviour {
 		new Thread (threadStart).Start ();
 	}
 
+  //Map data thread
 	void MapDataThread(Vector2 centre, Action<MapData> callback) {
 		MapData mapData = GenerateMapData (centre);
 		lock (mapDataThreadInfoQueue) {
@@ -72,6 +81,7 @@ public class MapGenerator : MonoBehaviour {
 		}
 	}
 
+  //Begin mesh data thread
 	public void RequestMeshData(MapData mapData, int lod, Action<MeshData> callback) {
 		ThreadStart threadStart = delegate {
 			MeshDataThread (mapData, lod, callback);
@@ -80,6 +90,7 @@ public class MapGenerator : MonoBehaviour {
 		new Thread (threadStart).Start ();
 	}
 
+  //Mesh data thread
 	void MeshDataThread(MapData mapData, int lod, Action<MeshData> callback) {
 		MeshData meshData = MeshGenerator.GenerateTerrainMesh (mapData.heightMap, meshHeightMultiplier, meshHeightCurve, lod);
 		lock (meshDataThreadInfoQueue) {
@@ -87,6 +98,7 @@ public class MapGenerator : MonoBehaviour {
 		}
 	}
 
+  //Do execute any map or mesh data requests in the order they are in the queue
 	void Update() {
 		if (mapDataThreadInfoQueue.Count > 0) {
 			for (int i = 0; i < mapDataThreadInfoQueue.Count; i++) {
@@ -103,9 +115,13 @@ public class MapGenerator : MonoBehaviour {
 		}
 	}
 
+  //Create the map data
 	MapData GenerateMapData(Vector2 centre) {
+    
+    //create an array of floats representing heights
 		float[,] noiseMap = Noise.GenerateNoiseMap (mapChunkSize + 2, mapChunkSize + 2, seed, noiseScale, octaves, persistance, lacunarity, centre + offset, normalizeMode);
-
+    
+    //Assign colors based on the float value in the noise map
 		Color[] colourMap = new Color[mapChunkSize * mapChunkSize];
 		for (int y = 0; y < mapChunkSize; y++) {
 			for (int x = 0; x < mapChunkSize; x++) {
@@ -126,7 +142,7 @@ public class MapGenerator : MonoBehaviour {
 
 		return new MapData (noiseMap, colourMap);
 	}
-
+  
 	void OnValidate() {
 		if (lacunarity < 1) {
 			lacunarity = 1;

@@ -9,7 +9,7 @@ public class PlayerClass : LivingClass {
   public event Action Unpause;
   bool paused = false;
   
-  //TODO create an event manager which will switch the camera to the UI and stop all objects upon pausing
+  //TODO create an event manager which will switch the camera to the UI (WILL NOT STOP OTHER OBJECTS)
   void Update(){
     if (Input.GetButtonDown(KeyCode.Escape.ToString())){
       if (paused){Unpause();}
