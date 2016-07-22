@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System
+using System;
 
 public class InventoryClass : MonoBehaviour {
   GameObject[] itemArray;
@@ -8,7 +8,7 @@ public class InventoryClass : MonoBehaviour {
   public int columns;
   int maxItemCapacity;
   int numItems;
-  public event Action CannotAddToFullInventory();
+  public event Action CannotAddToFullInventory;
   
   //Create an item array of the correct size
   void Awake(){

@@ -1,19 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class LivingClass: MonoBehaviour {
+[RequireComponent (typeof (Rigidbody))]
+public class LivingClass : MonoBehaviour {
   public float maxHealth;
   float health;
   public float speed;
   Rigidbody body;
   public float WeaponDamage;
+  //Add animation for taking damage and dying
   
   void Awake(){
     health = maxHealth;
-    body = gameObject.AddComponent<Rigidbody>();
+    body = GetComponent<Rigidbody>();
   }
   
-  //figure out some way to pass a damage value to this trigger or figure out how events work and see if its possible to do it like that
   public void TakeDamage(float damageAmount){
     health -= damageAmount;
     if (health <= 0f){
