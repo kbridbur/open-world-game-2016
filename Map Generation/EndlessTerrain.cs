@@ -21,6 +21,7 @@ public class EndlessTerrain : MonoBehaviour {
 	int chunkSize;
 	int chunksVisibleInViewDst;
 
+  //Dictionary of locations to chunks
 	Dictionary<Vector2, TerrainChunk> terrainChunkDictionary = new Dictionary<Vector2, TerrainChunk>();
 	static List<TerrainChunk> terrainChunksVisibleLastUpdate = new List<TerrainChunk>();
 
@@ -34,6 +35,7 @@ public class EndlessTerrain : MonoBehaviour {
 		UpdateVisibleChunks ();
 	}
 
+  //Get viewer position and adjust visible chunks based on that and view distance
 	void Update() {
 		viewerPosition = new Vector2 (viewer.position.x, viewer.position.z) / scale;
 
@@ -42,9 +44,11 @@ public class EndlessTerrain : MonoBehaviour {
 			UpdateVisibleChunks ();
 		}
 	}
-		
+	
+  //update which chunks are active, if new chunks are needed, generate those	
 	void UpdateVisibleChunks() {
-
+    
+    //Set all current chunks to not visible
 		for (int i = 0; i < terrainChunksVisibleLastUpdate.Count; i++) {
 			terrainChunksVisibleLastUpdate [i].SetVisible (false);
 		}
@@ -56,7 +60,8 @@ public class EndlessTerrain : MonoBehaviour {
 		for (int yOffset = -chunksVisibleInViewDst; yOffset <= chunksVisibleInViewDst; yOffset++) {
 			for (int xOffset = -chunksVisibleInViewDst; xOffset <= chunksVisibleInViewDst; xOffset++) {
 				Vector2 viewedChunkCoord = new Vector2 (currentChunkCoordX + xOffset, currentChunkCoordY + yOffset);
-
+        
+        //get already made chunks in view distance and activate them, otherwise add new terrain chunks        
 				if (terrainChunkDictionary.ContainsKey (viewedChunkCoord)) {
 					terrainChunkDictionary [viewedChunkCoord].UpdateTerrainChunk ();
 				} else {
@@ -110,6 +115,7 @@ public class EndlessTerrain : MonoBehaviour {
 			mapGenerator.RequestMapData(position,OnMapDataReceived);
 		}
 
+    //Update terrainchunk upon recieving its map data (this moves to create mesh data)
 		void OnMapDataReceived(MapData mapData) {
 			this.mapData = mapData;
 			mapDataReceived = true;
@@ -121,7 +127,7 @@ public class EndlessTerrain : MonoBehaviour {
 		}
 
 	
-
+    
 		public void UpdateTerrainChunk() {
 			if (mapDataReceived) {
 				float viewerDstFromNearestEdge = Mathf.Sqrt (bounds.SqrDistance (viewerPosition));
@@ -137,7 +143,7 @@ public class EndlessTerrain : MonoBehaviour {
 							break;
 						}
 					}
-
+          //If chunk has a mesh already then set it, otherwise create it using the map data 
 					if (lodIndex != previousLODIndex) {
 						LODMesh lodMesh = lodMeshes [lodIndex];
 						if (lodMesh.hasMesh) {
@@ -192,7 +198,8 @@ public class EndlessTerrain : MonoBehaviour {
 		}
 
 	}
-
+  
+  //allow for different lods and maxviewdistances
 	[System.Serializable]
 	public struct LODInfo {
 		public int lod;
