@@ -52,12 +52,6 @@
       float backDistance;
       Quaternion targetQuaternion = target.transform.rotation;
       Vector3 targetVector3 = targetQuaternion.eulerAngles;
-      /*//get distance to be from the object based on pitch
-      yDistance = Mathf.Sign(pitch)*Mathf.Sin(Mathf.Abs(pitch*Mathf.Deg2Rad))*radius;
-      backDistance = -Mathf.Cos(Mathf.Abs(pitch*Mathf.Deg2Rad))*radius;
-      xDistance = Mathf.Sin((yaw+targetVector3.y)*Mathf.Deg2Rad)*backDistance;
-      zDistance = Mathf.Cos((yaw+targetVector3.y)*Mathf.Deg2Rad)*backDistance;
-      return new Vector3(xDistance + target.transform.position.x, yDistance + target.transform.position.y, zDistance + target.transform.position.z);*/
       backDistance = radius;
       xDistance = -Mathf.Sin((targetVector3.y)*Mathf.Deg2Rad)*backDistance;
       zDistance = -Mathf.Cos((targetVector3.y)*Mathf.Deg2Rad)*backDistance;
