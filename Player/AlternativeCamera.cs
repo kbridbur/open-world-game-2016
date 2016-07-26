@@ -7,19 +7,28 @@
      public bool smooth = true;
      public float minDistance = 10.0f;    //How far the target is from the camera
      public string property = "";
-     public float radius;
-     public float height;
-     
+     public float baseRadius;
+     public float baseHeight;
+     float scrollModifier = 1f;
+     float height;
+     float radius;
      private Color color;
      private float alpha = 1.0f;
      private Transform CameraTransform;
      
      void Awake() {
+         height = baseHeight;
+         radius = baseRadius;
          CameraTransform = transform;
      }
      // Update is called once per frame
      void Update () {
-         transform.position = Vector3.Lerp(transform.position, GetTransform(), Time.deltaTime * damping);
+       float scroll = Input.GetAxis("Mouse ScrollWheel");
+       scrollModifier -= scroll*.5f;
+       scrollModifier = Mathf.Clamp(scrollModifier, .2f, 1f);
+       transform.position = Vector3.Lerp(transform.position, GetTransform(), Time.deltaTime * damping);
+       height = baseHeight*scrollModifier;
+       radius = baseRadius*scrollModifier;
      }
      void LateUpdate() {
          if(target) {
