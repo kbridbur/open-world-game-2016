@@ -35,14 +35,15 @@
              if(smooth) {
                  
                  //Look at and dampen the rotation
-                 Quaternion rotation = Quaternion.LookRotation(target.position - CameraTransform.position);
+                 //Look slightly above the target
+                 Vector3 camTargetPosition = target.position + target.up*height/4f;
+                 Quaternion rotation = Quaternion.LookRotation(camTargetPosition - CameraTransform.position);
                  CameraTransform.rotation = Quaternion.Slerp(CameraTransform.rotation, rotation, Time.deltaTime * damping);
              }
              else { //Just look at
                  CameraTransform.rotation = Quaternion.FromToRotation(-Vector3.forward, (new Vector3(target.position.x, target.position.y, target.position.z) - CameraTransform.position).normalized);
                  
                  float distance = Vector3.Distance(target.position, CameraTransform.position);
-                 
                  if(distance < minDistance) {
                      alpha = Mathf.Lerp(alpha, 0.0f, Time.deltaTime * 2.0f);
                  }
