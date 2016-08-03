@@ -1,5 +1,6 @@
 ﻿ using UnityEngine;
  using System.Collections;
+ using UnityEngine.UI;
 
  public class AlternativeCamera : MonoBehaviour {
      public Transform target;        //an Object to follow
@@ -15,6 +16,12 @@
      private Color color;
      private float alpha = 1.0f;
      private Transform CameraTransform;
+     bool gameStarted = false;
+     Button button;
+     
+     public void StartGame(){
+       gameStarted = true;
+     }
      
      void Awake() {
          height = baseHeight;
@@ -23,14 +30,17 @@
      }
      // Update is called once per frame
      void Update () {
-       float scroll = Input.GetAxis("Mouse ScrollWheel");
-       scrollModifier -= scroll*.5f;
-       scrollModifier = Mathf.Clamp(scrollModifier, .2f, 1f);
-       transform.position = Vector3.Lerp(transform.position, GetTransform(), Time.deltaTime * damping);
-       height = baseHeight*scrollModifier;
-       radius = baseRadius*scrollModifier;
+       if (gameStarted){
+         float scroll = Input.GetAxis("Mouse ScrollWheel");
+         scrollModifier -= scroll*.5f;
+         scrollModifier = Mathf.Clamp(scrollModifier, .2f, 1f);
+         transform.position = Vector3.Lerp(transform.position, GetTransform(), Time.deltaTime * damping);
+         height = baseHeight*scrollModifier;
+         radius = baseRadius*scrollModifier;
+       }
      }
      void LateUpdate() {
+       if (gameStarted){
          if(target) {
              if(smooth) {
                  
@@ -53,6 +63,10 @@
                  }
              }
          }
+       }
+       else{
+         //Define some behavior while the game is inactive
+       }
      }
      
     Vector3 GetTransform(){
